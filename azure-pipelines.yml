@@ -6,6 +6,13 @@
 trigger:
 - '*'
 
+resources:
+  repositories:
+    - repository: 'ort_repo'
+      type: github
+      name: 'oss-review-toolkit/ort'
+      endpoint: 'github.com_VaeterchenFrost'
+
 pool:
   vmImage: 'ubuntu-16.04'
   demands:
@@ -55,3 +62,5 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   condition: succeeded()
+
+- checkout: 'ort_repo'
