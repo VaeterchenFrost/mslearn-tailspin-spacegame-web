@@ -6,13 +6,6 @@
 trigger:
 - '*'
 
-resources:
-  repositories:
-    - repository: 'ort_repo'
-      type: github
-      name: 'oss-review-toolkit/ort'
-      endpoint: 'github.com_VaeterchenFrost'
-
 pool:
   vmImage: 'ubuntu-16.04'
   demands:
@@ -20,7 +13,7 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  wwwrootDir: 's/Tailspin.SpaceGame.Web/wwwroot'
+  wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
   dotnetSdkVersion: '3.1.100'
 
 steps:
@@ -34,11 +27,8 @@ steps:
   displayName: 'Run npm install'
   inputs:
     verbose: false
-    
-- checkout: self
-  name: 's'
 
-- script: './s/node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
+- script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
   displayName: 'Compile Sass assets'
 
 - task: gulp@1
@@ -65,5 +55,3 @@ steps:
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   condition: succeeded()
-
-- checkout: 'ort_repo'
