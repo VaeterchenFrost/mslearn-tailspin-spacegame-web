@@ -12,7 +12,15 @@ jobs:
 - job: RunDependencyCheck
   steps:
   - script: |
-      
+      gpg --version
+      gpg --keyserver hkp://keys.gnupg.net --recv-keys F9514E84AE3708288374BBBE097586CFEA37F9A6
+      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-5.3.2-release.zip" -o dependency-check-release.zip
+      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-5.3.2-release.zip.asc" -o dependency-check-release.zip.asc
+      gpg --verify dependency-check-5.3.2-release.zip.asc
+    displayName: Download dep check
+  - script: |
+      ls
+
     displayName: Install dep check
   - script: |
       
