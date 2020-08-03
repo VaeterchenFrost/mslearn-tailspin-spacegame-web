@@ -29,10 +29,10 @@ jobs:
     displayName: Install dep check
 
   - script: |
-      dependency-check/bin/dependency-check.bat --project $(project) --scan $(project)
+      dependency-check/bin/dependency-check.bat --project $(project) --scan $(project) -f HTML -o results
     displayName: Run dep check
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: 'dependency-check'
+      pathToPublish: 'results'
       artifactName: dependency-check
     condition: always()
