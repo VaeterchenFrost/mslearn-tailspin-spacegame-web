@@ -10,6 +10,7 @@ pool:
 
 variables:
   dep-check-ver: '5.3.2-release'
+  project: 'Tailspin.SpaceGame.Web'
 
 jobs: 
 - job: RunDependencyCheck
@@ -21,16 +22,17 @@ jobs:
       curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-$(dep-check-ver).zip.asc" -o dependency-check.zip.asc
       gpg --verify dependency-check.zip.asc
     displayName: Download dep check
+
   - script: |
       7z x dependency-check.zip
       dependency-check/bin/dependency-check.bat -h
-
     displayName: Install dep check
+
   - script: |
-      
+      dependency-check/bin/dependency-check.bat --project $(project) --scan $(project)
     displayName: Run dep check
   - task: PublishBuildArtifacts@1
     inputs:
       pathToPublish: 'dependency-check'
       artifactName: dependency-check
-    condition: false
+    condition: always()
