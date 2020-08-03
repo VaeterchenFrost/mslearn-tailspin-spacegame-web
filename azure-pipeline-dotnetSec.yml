@@ -8,15 +8,18 @@ trigger: none
 pool:
   vmImage: 'windows-latest'
 
+variables:
+  dep-check-ver: '5.3.2-release'
+
 jobs: 
 - job: RunDependencyCheck
   steps:
   - script: |
       gpg --version
       gpg --keyserver hkp://keys.gnupg.net --recv-keys F9514E84AE3708288374BBBE097586CFEA37F9A6
-      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-5.3.2-release.zip" -o dependency-check-release.zip
-      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-5.3.2-release.zip.asc" -o dependency-check-release.zip.asc
-      gpg --verify dependency-check-5.3.2-release.zip.asc
+      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-$(dep-check-ver).zip" -o dependency-check.zip
+      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-$(dep-check-ver).zip.asc" -o dependency-check.zip.asc
+      gpg --verify dependency-check.zip.asc
     displayName: Download dep check
   - script: |
       ls
