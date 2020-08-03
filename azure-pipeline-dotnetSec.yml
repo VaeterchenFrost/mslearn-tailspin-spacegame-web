@@ -6,69 +6,33 @@
 trigger: none
 
 pool:
-  vmImage: 'macos-latest'
-  demands:
-    - npm
+  vmImage: 'windows-latest'
 
 variables:
-  buildConfiguration: 'Release'
-  wwwrootDir: 'Tailspin.SpaceGame.Web/wwwroot'
-  dotnetSdkVersion: '3.1.100'
+  dep-check-ver: '5.3.2-release'
+  project: 'Tailspin.SpaceGame.Web'
 
 jobs: 
 - job: RunDependencyCheck
   steps:
   - script: |
-      brew install dependency-check
-    displayName: Install dep check
+      gpg --version
+      gpg --keyserver hkp://keys.gnupg.net --recv-keys F9514E84AE3708288374BBBE097586CFEA37F9A6
+      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-$(dep-check-ver).zip" -o dependency-check.zip
+      curl -L "https://dl.bintray.com/jeremy-long/owasp/dependency-check-$(dep-check-ver).zip.asc" -o dependency-check.zip.asc
+      gpg --verify dependency-check.zip.asc
+    displayName: Download dep check
+
   - script: |
-      /bin/dependency-check.sh --help
+      7z x dependency-check.zip
+      dependency-check/bin/dependency-check.bat -h
+    displayName: Install dep check
+
+  - script: |
+      dependency-check/bin/dependency-check.bat --project $(project) --scan $(project) -f HTML -o results
     displayName: Run dep check
   - task: PublishBuildArtifacts@1
     inputs:
-      pathToPublish: 'dependency-check'
+      pathToPublish: 'results'
       artifactName: dependency-check
-    condition: false
-
-- job: BuildPublish
-  condition: false
-  steps:
-  - task: UseDotNet@2
-    displayName: 'Use .NET Core SDK $(dotnetSdkVersion)'
-    inputs:
-      version: '$(dotnetSdkVersion)'
-
-  - task: Npm@1
-    displayName: 'Run npm install'
-    inputs:
-      verbose: false
-
-  - script: './node_modules/.bin/node-sass $(wwwrootDir) --output $(wwwrootDir)'
-    displayName: 'Compile Sass assets'
-
-
-  - script: 'echo "$(Build.DefinitionName), $(Build.BuildId), $(Build.BuildNumber)" > buildinfo.txt'
-    displayName: 'Write build info'
-    workingDirectory: $(wwwrootDir)
-
-  - task: DotNetCoreCLI@2
-    displayName: 'Restore project dependencies'
-    inputs:
-      command: 'restore'
-      projects: '**/*.csproj'
-
-  - task: DotNetCoreCLI@2
-    displayName: 'Build the project - $(buildConfiguration)'
-    inputs:
-      command: 'build'
-      arguments: '--no-restore --configuration $(buildConfiguration)'
-      projects: '**/*.csproj'
-
-  - task: DotNetCoreCLI@2
-    displayName: 'Publish the project - $(buildConfiguration)'
-    inputs:
-      command: 'publish'
-      projects: '**/*.csproj'
-      publishWebProjects: false
-      arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/$(buildConfiguration)'
-      zipAfterPublish: true
+    condition: always()
