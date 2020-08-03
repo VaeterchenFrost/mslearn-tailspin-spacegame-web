@@ -6,6 +6,13 @@
 trigger:
 - master
 
+resources:
+  repositories:
+    - repository: 'ort_repo'
+      type: github
+      name: 'oss-review-toolkit/ort'
+      endpoint: 'github.com_VaeterchenFrost'
+
 pool:
   vmImage: 'windows-latest'
 
@@ -15,6 +22,8 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
+- checkout: self
+  path: 's'
 - task: NuGetToolInstaller@1
 
 - task: NuGetCommand@2
@@ -32,3 +41,5 @@ steps:
   inputs:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- checkout: 'ort_repo'
