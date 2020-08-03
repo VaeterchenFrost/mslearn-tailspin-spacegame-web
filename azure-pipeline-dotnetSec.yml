@@ -22,7 +22,7 @@ jobs:
       brew install dependency-check
     displayName: Install dep check
   - script: |
-      dependency-check.sh --help
+      /bin/dependency-check.sh --help
     displayName: Run dep check
   - task: PublishBuildArtifacts@1
     inputs:
