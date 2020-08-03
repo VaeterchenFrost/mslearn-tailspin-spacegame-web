@@ -22,7 +22,8 @@ jobs:
       gpg --verify dependency-check.zip.asc
     displayName: Download dep check
   - script: |
-      ls
+      7z x dependency-check.zip
+      dependency-check/bin/dependency-check.bat -h
 
     displayName: Install dep check
   - script: |
